@@ -11,8 +11,10 @@ export const useTimer = (initialMinutes = 25) => {
       interval = setInterval(() => {
         setTimeLeft((time) => time - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isRunning) {
       setIsRunning(false);
+      const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+      audio.play().catch(e => console.error("Audio play failed", e));
     }
     return () => clearInterval(interval);
   }, [isRunning, timeLeft]);
