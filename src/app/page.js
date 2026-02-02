@@ -1,66 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { useState } from 'react';
+import Timer from '@/components/Timer';
+import Controls from '@/components/Controls';
+import SettingsModal from '@/components/SettingsModal';
+import { useTimer } from '@/hooks/useTimer';
 
 export default function Home() {
+  const { timeLeft, isRunning, start, pause, reset, setDuration, initialTime } = useTimer(25);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center relative p-8">
+      {/* Background decorations */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--accent-secondary)] rounded-full blur-[120px] opacity-30 animate-pulse"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--accent-primary)] rounded-full blur-[120px] opacity-30 animate-pulse"></div>
+      </div>
+
+      <div className="absolute top-12 left-0 w-full text-center">
+          <h1 className="text-xl font-bold tracking-[0.5em] uppercase opacity-40 text-center">Pomodoro</h1>
+      </div>
+
+      <Timer timeLeft={timeLeft} initialTime={initialTime} /> 
+      
+      <Controls
+        isRunning={isRunning}
+        onStart={start}
+        onPause={pause}
+        onReset={reset}
+        onSettings={() => setIsSettingsOpen(true)}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onSave={setDuration}
+        currentDuration={initialTime}
+      />
+    </main>
   );
 }
