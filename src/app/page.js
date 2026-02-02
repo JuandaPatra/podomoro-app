@@ -1,14 +1,25 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Timer from '@/components/Timer';
 import Controls from '@/components/Controls';
 import SettingsModal from '@/components/SettingsModal';
+import CompletionModal from '@/components/CompletionModal';
 import { useTimer } from '@/hooks/useTimer';
 
 export default function Home() {
   const { timeLeft, isRunning, start, pause, reset, setDuration, initialTime } = useTimer(25);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCompletionOpen, setIsCompletionOpen] = useState(false);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setIsCompletionOpen(true);
+    }
+  }, [timeLeft]);
+
+  const handleCompletionReset = () => {
+    setIsCompletionOpen(false);
+    reset();
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center relative p-8">
@@ -22,7 +33,7 @@ export default function Home() {
           <h1 className="text-xl font-bold tracking-[0.5em] uppercase opacity-40 text-center">Pomodoro</h1>
       </div>
 
-      <Timer timeLeft={timeLeft} initialTime={initialTime} /> 
+      <Timer timeLeft={timeLeft} initialTime={initialTime} />
       
       <Controls
         isRunning={isRunning}
@@ -37,6 +48,12 @@ export default function Home() {
         onClose={() => setIsSettingsOpen(false)}
         onSave={setDuration}
         currentDuration={initialTime}
+      />
+
+      <CompletionModal
+        isOpen={isCompletionOpen}
+        onClose={() => setIsCompletionOpen(false)}
+        onReset={handleCompletionReset}
       />
     </main>
   );
